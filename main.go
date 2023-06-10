@@ -13,9 +13,26 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed opening connection to postgres: %v", err)
 	}
-	defer client.Close()
+	defer func(client *ent.Client) {
+		_ = client.Close()
+	}(client)
 	// Run the auto migration tool.
 	if err = client.Schema.Create(context.Background()); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
+	}
+
+	user, err := CreateUser(context.Background(), client)
+	if err != nil {
+		log.Fatalf("failed creating user: %v", err)
+		return
+	}
+	log.Println("user was created: ", user)
+
+	users, err := QueryUser(context.Background(), client)
+	if err != nil {
+		log.Fatalf("failed querying user: %v", err)
+	}
+	for _, u := range users {
+		log.Println("user was queried: ", u)
 	}
 }

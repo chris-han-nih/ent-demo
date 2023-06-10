@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/chris-han-nih/ent-demo/ent"
-	"log"
+	"github.com/chris-han-nih/ent-demo/ent/user"
 )
 
 func CreateUser(ctx context.Context, client *ent.Client) (*ent.User, error) {
@@ -16,6 +16,16 @@ func CreateUser(ctx context.Context, client *ent.Client) (*ent.User, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed creating user: %w", err)
 	}
-	log.Println("user was created: ", u)
+	return u, nil
+}
+
+func QueryUser(ctx context.Context, client *ent.Client) ([]*ent.User, error) {
+	u, err := client.User.
+		Query().
+		Where(user.Name("a8m")).
+		All(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed querying user: %w", err)
+	}
 	return u, nil
 }
