@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/chris-han-nih/ent-demo/ent/user"
-	"github.com/google/uuid"
 )
 
 // User is the model entity for the User schema.
@@ -35,9 +34,7 @@ type User struct {
 	// Strings holds the value of the "strings" field.
 	Strings []string `json:"strings,omitempty"`
 	// State holds the value of the "state" field.
-	State user.State `json:"state,omitempty"`
-	// UUID holds the value of the "uuid" field.
-	UUID         uuid.UUID `json:"uuid,omitempty"`
+	State        user.State `json:"state,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -58,8 +55,6 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
-		case user.FieldUUID:
-			values[i] = new(uuid.UUID)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -133,12 +128,6 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.State = user.State(value.String)
 			}
-		case user.FieldUUID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field uuid", values[i])
-			} else if value != nil {
-				u.UUID = *value
-			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
 		}
@@ -198,9 +187,6 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("state=")
 	builder.WriteString(fmt.Sprintf("%v", u.State))
-	builder.WriteString(", ")
-	builder.WriteString("uuid=")
-	builder.WriteString(fmt.Sprintf("%v", u.UUID))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -3,7 +3,10 @@ package main
 import (
 	"context"
 	"github.com/chris-han-nih/ent-demo/ent"
+	"github.com/chris-han-nih/ent-demo/ent/migrate"
+	"github.com/chris-han-nih/ent-demo/model"
 	"log"
+	"net/url"
 
 	_ "github.com/lib/pq"
 )
@@ -17,9 +20,28 @@ func main() {
 		_ = client.Close()
 	}(client)
 	// Run the auto migration tool.
-	if err = client.Schema.Create(context.Background()); err != nil {
+	if err = client.Schema.Create(context.Background(), migrate.WithDropColumn(true)); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
+
+	user := &model.User{
+		Age:    30,
+		Rank:   1.0,
+		Active: true,
+		Name:   "yougjae",
+		Url: &url.URL{
+			Scheme: "http",
+			Host:   "localhost",
+		},
+		State: "on",
+	}
+
+	id, err := user.Create(context.Background(), client)
+	if err != nil {
+		log.Fatalf("failed creating user: %v", err)
+		return
+	}
+	log.Println("user was created: ", id)
 
 	//user, err := CreateUser(context.Background(), client)
 	//if err != nil {

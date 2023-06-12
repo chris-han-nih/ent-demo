@@ -7,7 +7,6 @@ import (
 
 	"github.com/chris-han-nih/ent-demo/ent/schema"
 	"github.com/chris-han-nih/ent-demo/ent/user"
-	"github.com/google/uuid"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -28,8 +27,4 @@ func init() {
 	userDescCreatedAt := userFields[4].Descriptor()
 	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
 	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
-	// userDescUUID is the schema descriptor for uuid field.
-	userDescUUID := userFields[8].Descriptor()
-	// user.DefaultUUID holds the default value on creation for the uuid field.
-	user.DefaultUUID = userDescUUID.Default.(func() uuid.UUID)
 }

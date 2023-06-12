@@ -3,7 +3,6 @@ package schema
 import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
-	"github.com/google/uuid"
 	"net/url"
 	"time"
 )
@@ -33,8 +32,6 @@ func (User) Fields() []ent.Field {
 		field.Enum("state").
 			Values("on", "off").
 			Optional(),
-		field.UUID("uuid", uuid.UUID{}).
-			Default(uuid.New),
 	}
 }
 

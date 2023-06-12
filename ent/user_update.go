@@ -15,7 +15,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/chris-han-nih/ent-demo/ent/predicate"
 	"github.com/chris-han-nih/ent-demo/ent/user"
-	"github.com/google/uuid"
 )
 
 // UserUpdate is the builder for updating User entities.
@@ -155,20 +154,6 @@ func (uu *UserUpdate) ClearState() *UserUpdate {
 	return uu
 }
 
-// SetUUID sets the "uuid" field.
-func (uu *UserUpdate) SetUUID(u uuid.UUID) *UserUpdate {
-	uu.mutation.SetUUID(u)
-	return uu
-}
-
-// SetNillableUUID sets the "uuid" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableUUID(u *uuid.UUID) *UserUpdate {
-	if u != nil {
-		uu.SetUUID(*u)
-	}
-	return uu
-}
-
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -274,9 +259,6 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.StateCleared() {
 		_spec.ClearField(user.FieldState, field.TypeEnum)
-	}
-	if value, ok := uu.mutation.UUID(); ok {
-		_spec.SetField(user.FieldUUID, field.TypeUUID, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -422,20 +404,6 @@ func (uuo *UserUpdateOne) ClearState() *UserUpdateOne {
 	return uuo
 }
 
-// SetUUID sets the "uuid" field.
-func (uuo *UserUpdateOne) SetUUID(u uuid.UUID) *UserUpdateOne {
-	uuo.mutation.SetUUID(u)
-	return uuo
-}
-
-// SetNillableUUID sets the "uuid" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableUUID(u *uuid.UUID) *UserUpdateOne {
-	if u != nil {
-		uuo.SetUUID(*u)
-	}
-	return uuo
-}
-
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -571,9 +539,6 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.StateCleared() {
 		_spec.ClearField(user.FieldState, field.TypeEnum)
-	}
-	if value, ok := uuo.mutation.UUID(); ok {
-		_spec.SetField(user.FieldUUID, field.TypeUUID, value)
 	}
 	_node = &User{config: uuo.config}
 	_spec.Assign = _node.assignValues

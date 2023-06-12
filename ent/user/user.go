@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/google/uuid"
 )
 
 const (
@@ -31,8 +30,6 @@ const (
 	FieldStrings = "strings"
 	// FieldState holds the string denoting the state field in the database.
 	FieldState = "state"
-	// FieldUUID holds the string denoting the uuid field in the database.
-	FieldUUID = "uuid"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 )
@@ -48,7 +45,6 @@ var Columns = []string{
 	FieldURL,
 	FieldStrings,
 	FieldState,
-	FieldUUID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -68,8 +64,6 @@ var (
 	DefaultActive bool
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
-	// DefaultUUID holds the default value on creation for the "uuid" field.
-	DefaultUUID func() uuid.UUID
 )
 
 // State defines the type for the "state" enum field.
@@ -131,9 +125,4 @@ func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByState orders the results by the state field.
 func ByState(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldState, opts...).ToFunc()
-}
-
-// ByUUID orders the results by the uuid field.
-func ByUUID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUUID, opts...).ToFunc()
 }

@@ -19,7 +19,6 @@ var (
 		{Name: "url", Type: field.TypeJSON, Nullable: true},
 		{Name: "strings", Type: field.TypeJSON, Nullable: true},
 		{Name: "state", Type: field.TypeEnum, Nullable: true, Enums: []string{"on", "off"}},
-		{Name: "uuid", Type: field.TypeUUID},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{

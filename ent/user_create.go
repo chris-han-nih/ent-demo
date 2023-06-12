@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/chris-han-nih/ent-demo/ent/user"
-	"github.com/google/uuid"
 )
 
 // UserCreate is the builder for creating a User entity.
@@ -102,20 +101,6 @@ func (uc *UserCreate) SetNillableState(u *user.State) *UserCreate {
 	return uc
 }
 
-// SetUUID sets the "uuid" field.
-func (uc *UserCreate) SetUUID(u uuid.UUID) *UserCreate {
-	uc.mutation.SetUUID(u)
-	return uc
-}
-
-// SetNillableUUID sets the "uuid" field if the given value is not nil.
-func (uc *UserCreate) SetNillableUUID(u *uuid.UUID) *UserCreate {
-	if u != nil {
-		uc.SetUUID(*u)
-	}
-	return uc
-}
-
 // Mutation returns the UserMutation object of the builder.
 func (uc *UserCreate) Mutation() *UserMutation {
 	return uc.mutation
@@ -159,10 +144,6 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultCreatedAt()
 		uc.mutation.SetCreatedAt(v)
 	}
-	if _, ok := uc.mutation.UUID(); !ok {
-		v := user.DefaultUUID()
-		uc.mutation.SetUUID(v)
-	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -188,9 +169,6 @@ func (uc *UserCreate) check() error {
 		if err := user.StateValidator(v); err != nil {
 			return &ValidationError{Name: "state", err: fmt.Errorf(`ent: validator failed for field "User.state": %w`, err)}
 		}
-	}
-	if _, ok := uc.mutation.UUID(); !ok {
-		return &ValidationError{Name: "uuid", err: errors.New(`ent: missing required field "User.uuid"`)}
 	}
 	return nil
 }
@@ -249,10 +227,6 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.State(); ok {
 		_spec.SetField(user.FieldState, field.TypeEnum, value)
 		_node.State = value
-	}
-	if value, ok := uc.mutation.UUID(); ok {
-		_spec.SetField(user.FieldUUID, field.TypeUUID, value)
-		_node.UUID = value
 	}
 	return _node, _spec
 }
