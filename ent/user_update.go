@@ -6,12 +6,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/url"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/chris-han-nih/ent-demo/ent/predicate"
 	"github.com/chris-han-nih/ent-demo/ent/user"
+	"github.com/google/uuid"
 )
 
 // UserUpdate is the builder for updating User entities.
@@ -40,30 +44,127 @@ func (uu *UserUpdate) AddAge(i int) *UserUpdate {
 	return uu
 }
 
+// SetRank sets the "rank" field.
+func (uu *UserUpdate) SetRank(f float64) *UserUpdate {
+	uu.mutation.ResetRank()
+	uu.mutation.SetRank(f)
+	return uu
+}
+
+// SetNillableRank sets the "rank" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableRank(f *float64) *UserUpdate {
+	if f != nil {
+		uu.SetRank(*f)
+	}
+	return uu
+}
+
+// AddRank adds f to the "rank" field.
+func (uu *UserUpdate) AddRank(f float64) *UserUpdate {
+	uu.mutation.AddRank(f)
+	return uu
+}
+
+// ClearRank clears the value of the "rank" field.
+func (uu *UserUpdate) ClearRank() *UserUpdate {
+	uu.mutation.ClearRank()
+	return uu
+}
+
+// SetActive sets the "active" field.
+func (uu *UserUpdate) SetActive(b bool) *UserUpdate {
+	uu.mutation.SetActive(b)
+	return uu
+}
+
+// SetNillableActive sets the "active" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableActive(b *bool) *UserUpdate {
+	if b != nil {
+		uu.SetActive(*b)
+	}
+	return uu
+}
+
 // SetName sets the "name" field.
 func (uu *UserUpdate) SetName(s string) *UserUpdate {
 	uu.mutation.SetName(s)
 	return uu
 }
 
-// SetNillableName sets the "name" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableName(s *string) *UserUpdate {
-	if s != nil {
-		uu.SetName(*s)
+// SetCreatedAt sets the "created_at" field.
+func (uu *UserUpdate) SetCreatedAt(t time.Time) *UserUpdate {
+	uu.mutation.SetCreatedAt(t)
+	return uu
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableCreatedAt(t *time.Time) *UserUpdate {
+	if t != nil {
+		uu.SetCreatedAt(*t)
 	}
 	return uu
 }
 
-// SetEmail sets the "email" field.
-func (uu *UserUpdate) SetEmail(s string) *UserUpdate {
-	uu.mutation.SetEmail(s)
+// SetURL sets the "url" field.
+func (uu *UserUpdate) SetURL(u *url.URL) *UserUpdate {
+	uu.mutation.SetURL(u)
 	return uu
 }
 
-// SetNillableEmail sets the "email" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableEmail(s *string) *UserUpdate {
-	if s != nil {
-		uu.SetEmail(*s)
+// ClearURL clears the value of the "url" field.
+func (uu *UserUpdate) ClearURL() *UserUpdate {
+	uu.mutation.ClearURL()
+	return uu
+}
+
+// SetStrings sets the "strings" field.
+func (uu *UserUpdate) SetStrings(s []string) *UserUpdate {
+	uu.mutation.SetStrings(s)
+	return uu
+}
+
+// AppendStrings appends s to the "strings" field.
+func (uu *UserUpdate) AppendStrings(s []string) *UserUpdate {
+	uu.mutation.AppendStrings(s)
+	return uu
+}
+
+// ClearStrings clears the value of the "strings" field.
+func (uu *UserUpdate) ClearStrings() *UserUpdate {
+	uu.mutation.ClearStrings()
+	return uu
+}
+
+// SetState sets the "state" field.
+func (uu *UserUpdate) SetState(u user.State) *UserUpdate {
+	uu.mutation.SetState(u)
+	return uu
+}
+
+// SetNillableState sets the "state" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableState(u *user.State) *UserUpdate {
+	if u != nil {
+		uu.SetState(*u)
+	}
+	return uu
+}
+
+// ClearState clears the value of the "state" field.
+func (uu *UserUpdate) ClearState() *UserUpdate {
+	uu.mutation.ClearState()
+	return uu
+}
+
+// SetUUID sets the "uuid" field.
+func (uu *UserUpdate) SetUUID(u uuid.UUID) *UserUpdate {
+	uu.mutation.SetUUID(u)
+	return uu
+}
+
+// SetNillableUUID sets the "uuid" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableUUID(u *uuid.UUID) *UserUpdate {
+	if u != nil {
+		uu.SetUUID(*u)
 	}
 	return uu
 }
@@ -107,6 +208,11 @@ func (uu *UserUpdate) check() error {
 			return &ValidationError{Name: "age", err: fmt.Errorf(`ent: validator failed for field "User.age": %w`, err)}
 		}
 	}
+	if v, ok := uu.mutation.State(); ok {
+		if err := user.StateValidator(v); err != nil {
+			return &ValidationError{Name: "state", err: fmt.Errorf(`ent: validator failed for field "User.state": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -128,11 +234,49 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := uu.mutation.AddedAge(); ok {
 		_spec.AddField(user.FieldAge, field.TypeInt, value)
 	}
+	if value, ok := uu.mutation.Rank(); ok {
+		_spec.SetField(user.FieldRank, field.TypeFloat64, value)
+	}
+	if value, ok := uu.mutation.AddedRank(); ok {
+		_spec.AddField(user.FieldRank, field.TypeFloat64, value)
+	}
+	if uu.mutation.RankCleared() {
+		_spec.ClearField(user.FieldRank, field.TypeFloat64)
+	}
+	if value, ok := uu.mutation.Active(); ok {
+		_spec.SetField(user.FieldActive, field.TypeBool, value)
+	}
 	if value, ok := uu.mutation.Name(); ok {
 		_spec.SetField(user.FieldName, field.TypeString, value)
 	}
-	if value, ok := uu.mutation.Email(); ok {
-		_spec.SetField(user.FieldEmail, field.TypeString, value)
+	if value, ok := uu.mutation.CreatedAt(); ok {
+		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := uu.mutation.URL(); ok {
+		_spec.SetField(user.FieldURL, field.TypeJSON, value)
+	}
+	if uu.mutation.URLCleared() {
+		_spec.ClearField(user.FieldURL, field.TypeJSON)
+	}
+	if value, ok := uu.mutation.Strings(); ok {
+		_spec.SetField(user.FieldStrings, field.TypeJSON, value)
+	}
+	if value, ok := uu.mutation.AppendedStrings(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, user.FieldStrings, value)
+		})
+	}
+	if uu.mutation.StringsCleared() {
+		_spec.ClearField(user.FieldStrings, field.TypeJSON)
+	}
+	if value, ok := uu.mutation.State(); ok {
+		_spec.SetField(user.FieldState, field.TypeEnum, value)
+	}
+	if uu.mutation.StateCleared() {
+		_spec.ClearField(user.FieldState, field.TypeEnum)
+	}
+	if value, ok := uu.mutation.UUID(); ok {
+		_spec.SetField(user.FieldUUID, field.TypeUUID, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -167,30 +311,127 @@ func (uuo *UserUpdateOne) AddAge(i int) *UserUpdateOne {
 	return uuo
 }
 
+// SetRank sets the "rank" field.
+func (uuo *UserUpdateOne) SetRank(f float64) *UserUpdateOne {
+	uuo.mutation.ResetRank()
+	uuo.mutation.SetRank(f)
+	return uuo
+}
+
+// SetNillableRank sets the "rank" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableRank(f *float64) *UserUpdateOne {
+	if f != nil {
+		uuo.SetRank(*f)
+	}
+	return uuo
+}
+
+// AddRank adds f to the "rank" field.
+func (uuo *UserUpdateOne) AddRank(f float64) *UserUpdateOne {
+	uuo.mutation.AddRank(f)
+	return uuo
+}
+
+// ClearRank clears the value of the "rank" field.
+func (uuo *UserUpdateOne) ClearRank() *UserUpdateOne {
+	uuo.mutation.ClearRank()
+	return uuo
+}
+
+// SetActive sets the "active" field.
+func (uuo *UserUpdateOne) SetActive(b bool) *UserUpdateOne {
+	uuo.mutation.SetActive(b)
+	return uuo
+}
+
+// SetNillableActive sets the "active" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableActive(b *bool) *UserUpdateOne {
+	if b != nil {
+		uuo.SetActive(*b)
+	}
+	return uuo
+}
+
 // SetName sets the "name" field.
 func (uuo *UserUpdateOne) SetName(s string) *UserUpdateOne {
 	uuo.mutation.SetName(s)
 	return uuo
 }
 
-// SetNillableName sets the "name" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableName(s *string) *UserUpdateOne {
-	if s != nil {
-		uuo.SetName(*s)
+// SetCreatedAt sets the "created_at" field.
+func (uuo *UserUpdateOne) SetCreatedAt(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetCreatedAt(t)
+	return uuo
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableCreatedAt(t *time.Time) *UserUpdateOne {
+	if t != nil {
+		uuo.SetCreatedAt(*t)
 	}
 	return uuo
 }
 
-// SetEmail sets the "email" field.
-func (uuo *UserUpdateOne) SetEmail(s string) *UserUpdateOne {
-	uuo.mutation.SetEmail(s)
+// SetURL sets the "url" field.
+func (uuo *UserUpdateOne) SetURL(u *url.URL) *UserUpdateOne {
+	uuo.mutation.SetURL(u)
 	return uuo
 }
 
-// SetNillableEmail sets the "email" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableEmail(s *string) *UserUpdateOne {
-	if s != nil {
-		uuo.SetEmail(*s)
+// ClearURL clears the value of the "url" field.
+func (uuo *UserUpdateOne) ClearURL() *UserUpdateOne {
+	uuo.mutation.ClearURL()
+	return uuo
+}
+
+// SetStrings sets the "strings" field.
+func (uuo *UserUpdateOne) SetStrings(s []string) *UserUpdateOne {
+	uuo.mutation.SetStrings(s)
+	return uuo
+}
+
+// AppendStrings appends s to the "strings" field.
+func (uuo *UserUpdateOne) AppendStrings(s []string) *UserUpdateOne {
+	uuo.mutation.AppendStrings(s)
+	return uuo
+}
+
+// ClearStrings clears the value of the "strings" field.
+func (uuo *UserUpdateOne) ClearStrings() *UserUpdateOne {
+	uuo.mutation.ClearStrings()
+	return uuo
+}
+
+// SetState sets the "state" field.
+func (uuo *UserUpdateOne) SetState(u user.State) *UserUpdateOne {
+	uuo.mutation.SetState(u)
+	return uuo
+}
+
+// SetNillableState sets the "state" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableState(u *user.State) *UserUpdateOne {
+	if u != nil {
+		uuo.SetState(*u)
+	}
+	return uuo
+}
+
+// ClearState clears the value of the "state" field.
+func (uuo *UserUpdateOne) ClearState() *UserUpdateOne {
+	uuo.mutation.ClearState()
+	return uuo
+}
+
+// SetUUID sets the "uuid" field.
+func (uuo *UserUpdateOne) SetUUID(u uuid.UUID) *UserUpdateOne {
+	uuo.mutation.SetUUID(u)
+	return uuo
+}
+
+// SetNillableUUID sets the "uuid" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableUUID(u *uuid.UUID) *UserUpdateOne {
+	if u != nil {
+		uuo.SetUUID(*u)
 	}
 	return uuo
 }
@@ -247,6 +488,11 @@ func (uuo *UserUpdateOne) check() error {
 			return &ValidationError{Name: "age", err: fmt.Errorf(`ent: validator failed for field "User.age": %w`, err)}
 		}
 	}
+	if v, ok := uuo.mutation.State(); ok {
+		if err := user.StateValidator(v); err != nil {
+			return &ValidationError{Name: "state", err: fmt.Errorf(`ent: validator failed for field "User.state": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -285,11 +531,49 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	if value, ok := uuo.mutation.AddedAge(); ok {
 		_spec.AddField(user.FieldAge, field.TypeInt, value)
 	}
+	if value, ok := uuo.mutation.Rank(); ok {
+		_spec.SetField(user.FieldRank, field.TypeFloat64, value)
+	}
+	if value, ok := uuo.mutation.AddedRank(); ok {
+		_spec.AddField(user.FieldRank, field.TypeFloat64, value)
+	}
+	if uuo.mutation.RankCleared() {
+		_spec.ClearField(user.FieldRank, field.TypeFloat64)
+	}
+	if value, ok := uuo.mutation.Active(); ok {
+		_spec.SetField(user.FieldActive, field.TypeBool, value)
+	}
 	if value, ok := uuo.mutation.Name(); ok {
 		_spec.SetField(user.FieldName, field.TypeString, value)
 	}
-	if value, ok := uuo.mutation.Email(); ok {
-		_spec.SetField(user.FieldEmail, field.TypeString, value)
+	if value, ok := uuo.mutation.CreatedAt(); ok {
+		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := uuo.mutation.URL(); ok {
+		_spec.SetField(user.FieldURL, field.TypeJSON, value)
+	}
+	if uuo.mutation.URLCleared() {
+		_spec.ClearField(user.FieldURL, field.TypeJSON)
+	}
+	if value, ok := uuo.mutation.Strings(); ok {
+		_spec.SetField(user.FieldStrings, field.TypeJSON, value)
+	}
+	if value, ok := uuo.mutation.AppendedStrings(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, user.FieldStrings, value)
+		})
+	}
+	if uuo.mutation.StringsCleared() {
+		_spec.ClearField(user.FieldStrings, field.TypeJSON)
+	}
+	if value, ok := uuo.mutation.State(); ok {
+		_spec.SetField(user.FieldState, field.TypeEnum, value)
+	}
+	if uuo.mutation.StateCleared() {
+		_spec.ClearField(user.FieldState, field.TypeEnum)
+	}
+	if value, ok := uuo.mutation.UUID(); ok {
+		_spec.SetField(user.FieldUUID, field.TypeUUID, value)
 	}
 	_node = &User{config: uuo.config}
 	_spec.Assign = _node.assignValues

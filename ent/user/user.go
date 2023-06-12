@@ -3,7 +3,11 @@
 package user
 
 import (
+	"fmt"
+	"time"
+
 	"entgo.io/ent/dialect/sql"
+	"github.com/google/uuid"
 )
 
 const (
@@ -13,10 +17,22 @@ const (
 	FieldID = "id"
 	// FieldAge holds the string denoting the age field in the database.
 	FieldAge = "age"
+	// FieldRank holds the string denoting the rank field in the database.
+	FieldRank = "rank"
+	// FieldActive holds the string denoting the active field in the database.
+	FieldActive = "active"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
-	// FieldEmail holds the string denoting the email field in the database.
-	FieldEmail = "email"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldURL holds the string denoting the url field in the database.
+	FieldURL = "url"
+	// FieldStrings holds the string denoting the strings field in the database.
+	FieldStrings = "strings"
+	// FieldState holds the string denoting the state field in the database.
+	FieldState = "state"
+	// FieldUUID holds the string denoting the uuid field in the database.
+	FieldUUID = "uuid"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 )
@@ -25,8 +41,14 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldAge,
+	FieldRank,
+	FieldActive,
 	FieldName,
-	FieldEmail,
+	FieldCreatedAt,
+	FieldURL,
+	FieldStrings,
+	FieldState,
+	FieldUUID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -42,11 +64,36 @@ func ValidColumn(column string) bool {
 var (
 	// AgeValidator is a validator for the "age" field. It is called by the builders before save.
 	AgeValidator func(int) error
-	// DefaultName holds the default value on creation for the "name" field.
-	DefaultName string
-	// DefaultEmail holds the default value on creation for the "email" field.
-	DefaultEmail string
+	// DefaultActive holds the default value on creation for the "active" field.
+	DefaultActive bool
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultUUID holds the default value on creation for the "uuid" field.
+	DefaultUUID func() uuid.UUID
 )
+
+// State defines the type for the "state" enum field.
+type State string
+
+// State values.
+const (
+	StateOn  State = "on"
+	StateOff State = "off"
+)
+
+func (s State) String() string {
+	return string(s)
+}
+
+// StateValidator is a validator for the "state" field enum values. It is called by the builders before save.
+func StateValidator(s State) error {
+	switch s {
+	case StateOn, StateOff:
+		return nil
+	default:
+		return fmt.Errorf("user: invalid enum value for state field: %q", s)
+	}
+}
 
 // OrderOption defines the ordering options for the User queries.
 type OrderOption func(*sql.Selector)
@@ -61,12 +108,32 @@ func ByAge(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAge, opts...).ToFunc()
 }
 
+// ByRank orders the results by the rank field.
+func ByRank(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRank, opts...).ToFunc()
+}
+
+// ByActive orders the results by the active field.
+func ByActive(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldActive, opts...).ToFunc()
+}
+
 // ByName orders the results by the name field.
 func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
 }
 
-// ByEmail orders the results by the email field.
-func ByEmail(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldEmail, opts...).ToFunc()
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByState orders the results by the state field.
+func ByState(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldState, opts...).ToFunc()
+}
+
+// ByUUID orders the results by the uuid field.
+func ByUUID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUUID, opts...).ToFunc()
 }

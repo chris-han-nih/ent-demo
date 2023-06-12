@@ -3,8 +3,11 @@
 package ent
 
 import (
+	"time"
+
 	"github.com/chris-han-nih/ent-demo/ent/schema"
 	"github.com/chris-han-nih/ent-demo/ent/user"
+	"github.com/google/uuid"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -17,12 +20,16 @@ func init() {
 	userDescAge := userFields[0].Descriptor()
 	// user.AgeValidator is a validator for the "age" field. It is called by the builders before save.
 	user.AgeValidator = userDescAge.Validators[0].(func(int) error)
-	// userDescName is the schema descriptor for name field.
-	userDescName := userFields[1].Descriptor()
-	// user.DefaultName holds the default value on creation for the name field.
-	user.DefaultName = userDescName.Default.(string)
-	// userDescEmail is the schema descriptor for email field.
-	userDescEmail := userFields[2].Descriptor()
-	// user.DefaultEmail holds the default value on creation for the email field.
-	user.DefaultEmail = userDescEmail.Default.(string)
+	// userDescActive is the schema descriptor for active field.
+	userDescActive := userFields[2].Descriptor()
+	// user.DefaultActive holds the default value on creation for the active field.
+	user.DefaultActive = userDescActive.Default.(bool)
+	// userDescCreatedAt is the schema descriptor for created_at field.
+	userDescCreatedAt := userFields[4].Descriptor()
+	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
+	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
+	// userDescUUID is the schema descriptor for uuid field.
+	userDescUUID := userFields[8].Descriptor()
+	// user.DefaultUUID holds the default value on creation for the uuid field.
+	user.DefaultUUID = userDescUUID.Default.(func() uuid.UUID)
 }

@@ -21,18 +21,18 @@ func main() {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
-	user, err := CreateUser(context.Background(), client)
-	if err != nil {
-		log.Fatalf("failed creating user: %v", err)
-		return
-	}
-	log.Println("user was created: ", user)
-
-	users, err := QueryUser(context.Background(), client)
-	if err != nil {
-		log.Fatalf("failed querying user: %v", err)
-	}
-	for _, u := range users {
-		log.Println("user was queried: ", u)
-	}
+	//user, err := CreateUser(context.Background(), client)
+	//if err != nil {
+	//	log.Fatalf("failed creating user: %v", err)
+	//	return
+	//}
+	//log.Println("user was created: ", user)
+	//
+	//users, err := QueryUser(context.Background(), client)
+	//if err != nil {
+	//	log.Fatalf("failed querying user: %v", err)
+	//}
+	//for _, u := range users {
+	//	log.Println("user was queried: ", u)
+	//}
 }

@@ -12,8 +12,14 @@ var (
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "age", Type: field.TypeInt},
-		{Name: "name", Type: field.TypeString, Default: "unknown"},
-		{Name: "email", Type: field.TypeString, Default: "unknown"},
+		{Name: "rank", Type: field.TypeFloat64, Nullable: true},
+		{Name: "active", Type: field.TypeBool, Default: false},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "url", Type: field.TypeJSON, Nullable: true},
+		{Name: "strings", Type: field.TypeJSON, Nullable: true},
+		{Name: "state", Type: field.TypeEnum, Nullable: true, Enums: []string{"on", "off"}},
+		{Name: "uuid", Type: field.TypeUUID},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
