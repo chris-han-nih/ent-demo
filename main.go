@@ -28,7 +28,7 @@ func main() {
 		Age:    30,
 		Rank:   1.0,
 		Active: true,
-		Name:   "yougjae",
+		Name:   "choco",
 		Url: &url.URL{
 			Scheme: "http",
 			Host:   "localhost",

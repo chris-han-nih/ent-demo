@@ -5,6 +5,7 @@ package ent
 import (
 	"time"
 
+	"github.com/chris-han-nih/ent-demo/ent/product"
 	"github.com/chris-han-nih/ent-demo/ent/schema"
 	"github.com/chris-han-nih/ent-demo/ent/user"
 )
@@ -13,6 +14,14 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	productFields := schema.Product{}.Fields()
+	_ = productFields
+	// productDescStock is the schema descriptor for stock field.
+	productDescStock := productFields[2].Descriptor()
+	// product.DefaultStock holds the default value on creation for the stock field.
+	product.DefaultStock = productDescStock.Default.(int)
+	// product.StockValidator is a validator for the "stock" field. It is called by the builders before save.
+	product.StockValidator = productDescStock.Validators[0].(func(int) error)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescAge is the schema descriptor for age field.
