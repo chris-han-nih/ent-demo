@@ -93,3 +93,40 @@ func (User) Fields() []ent.Field {
     }
 }
 ```
+
+### ID Field
+`id` 필드는 스키마에 내장되어 있으며 선언이 필요하지 않습니다. SQL 기반 데이터베이스에서 해당 유형은 기본적으로 int(그러나 codegen 옵션으로 변경할 수 있음)이며 데이터베이스에서 자동 증가됩니다.
+
+`id` 필드가 모든 테이블에서 고유하도록 구성하려면 스키마 마이그레이션을 실행할 때 WithGlobalUniqueID 옵션을 사용하십시오.
+`client.Schema.Create(ctx, migrate.WithGlobalUniqueID(true))`
+
+id 필드에 대해 다른 구성이 필요하거나 응용 프로그램(예: UUID)에서 엔터티 생성 시 id 값을 제공해야 하는 경우 기본 제공 id 구성을 재정의합니다. 예를 들어:
+```go
+// Fields of the Group.
+func (Group) Fields() []ent.Field {
+    return []ent.Field{
+        field.Int("id").
+            StructTag(`json:"oid,omitempty"`),
+    }
+}
+
+// Fields of the Blob.
+func (Blob) Fields() []ent.Field {
+    return []ent.Field{
+        field.UUID("id", uuid.UUID{}).
+            Default(uuid.New).
+            StorageKey("oid"),
+    }
+}
+
+// Fields of the Pet.
+func (Pet) Fields() []ent.Field {
+    return []ent.Field{
+        field.String("id").
+            MaxLen(25).
+            NotEmpty().
+            Unique().
+            Immutable(),
+    }
+}
+```
