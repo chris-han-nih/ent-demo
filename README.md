@@ -130,3 +130,31 @@ func (Pet) Fields() []ent.Field {
     }
 }
 ```
+
+### Database Type
+기본적으로 모든 필드는 데이터베이스에서 동일한 유형으로 저장됩니다. 예를 들어, `int` 필드는 모든 데이터베이스에서 `int`로 저장됩니다. 그러나 필드 유형을 변경하려는 경우 `SchemaType` 메서드를 사용하여 데이터베이스 유형을 변경할 수 있습니다.
+```go
+package schema
+
+import (
+    "entgo.io/ent"
+    "entgo.io/ent/dialect"
+    "entgo.io/ent/schema/field"
+)
+
+// Card schema.
+type Card struct {
+    ent.Schema
+}
+
+// Fields of the Card.
+func (Card) Fields() []ent.Field {
+    return []ent.Field{
+        field.Float("amount").
+            SchemaType(map[string]string{
+                dialect.MySQL:    "decimal(6,2)",   // Override MySQL.
+                dialect.Postgres: "numeric",        // Override Postgres.
+            }),
+    }
+}
+```
